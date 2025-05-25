@@ -85,42 +85,46 @@ export function AudioSRTPlayer() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-4">
-      <h1 className="mb-4 text-2xl font-bold">Audio + SRT Player</h1>
+    <>
+      <div className="mx-auto max-w-3xl space-y-4 p-4">
+        <h1 className="mb-4 text-2xl font-bold">Audio + SRT Player</h1>
 
-      <div className="grid grid-cols-1 gap-4">
-        <div className="grid gap-2">
-          <label className="text-sm font-semibold">Upload Audio File</label>
-          <Input type="file" accept="audio/*" onChange={handleAudioUpload} />
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid gap-2">
+            <label className="text-sm font-semibold">Upload Audio File</label>
+            <Input type="file" accept="audio/*" onChange={handleAudioUpload} />
+          </div>
+
+          <div className="grid gap-2">
+            <label className="text-sm font-semibold">Upload SRT File</label>
+            <Input type="file" accept=".srt" onChange={handleSrtUpload} />
+          </div>
         </div>
 
-        <div className="grid gap-2">
-          <label className="text-sm font-semibold">Upload SRT File</label>
-          <Input type="file" accept=".srt" onChange={handleSrtUpload} />
+        <div>
+          {subs.map((line, index) => {
+            const isActive = currentTime >= line.start && currentTime <= line.end;
+
+            return (
+              <div
+                key={index}
+                className={cn("cursor-pointer rounded-lg p-2 transition", {
+                  "ring-2 ring-blue-600 font-medium": isActive,
+                })}
+                onClick={() => handleSubtitleClick(line.start)}
+              >
+                <div>{line.text}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {audioUrl && (
-        <audio ref={audioRef} className="w-full" controls src={audioUrl} />
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t">
+          <audio ref={audioRef} className="w-full" controls src={audioUrl} />
+        </div>
       )}
-
-      <div>
-        {subs.map((line, index) => {
-          const isActive = currentTime >= line.start && currentTime <= line.end;
-
-          return (
-            <div
-              key={index}
-              className={cn("cursor-pointer rounded-lg p-2 transition", {
-                "ring-2 ring-blue-600 font-medium": isActive,
-              })}
-              onClick={() => handleSubtitleClick(line.start)}
-            >
-              <div>{line.text}</div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    </>
   );
 }
